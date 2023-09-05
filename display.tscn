@@ -1,0 +1,267 @@
+[gd_scene load_steps=2 format=3 uid="uid://dcumvsxqfjvg3"]
+
+[ext_resource type="Script" path="res://display.gd" id="1_8spet"]
+
+[node name="Control" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_8spet")
+
+[node name="Button" type="Button" parent="."]
+layout_mode = 0
+offset_left = 826.0
+offset_top = 471.0
+offset_right = 1114.0
+offset_bottom = 546.0
+disabled = true
+text = "Começar"
+
+[node name="LabelPrompt" type="Label" parent="."]
+layout_mode = 0
+offset_left = 827.0
+offset_top = 37.0
+offset_right = 1107.0
+offset_bottom = 365.0
+
+[node name="ProgressBar" type="ProgressBar" parent="."]
+layout_mode = 0
+offset_left = 854.0
+offset_top = 567.0
+offset_right = 1088.0
+offset_bottom = 594.0
+
+[node name="save_settings" type="Button" parent="."]
+layout_mode = 0
+offset_left = 866.0
+offset_top = 419.0
+offset_right = 1082.0
+offset_bottom = 458.0
+text = "Salvar propriedades"
+
+[node name="TabContainer" type="TabContainer" parent="."]
+layout_mode = 0
+offset_left = 38.0
+offset_top = 45.0
+offset_right = 442.0
+offset_bottom = 606.0
+
+[node name="Modelo" type="TabBar" parent="TabContainer"]
+layout_mode = 2
+
+[node name="Model_prop" type="ScrollContainer" parent="TabContainer/Modelo"]
+layout_mode = 0
+offset_left = 30.0
+offset_top = 20.0
+offset_right = 375.0
+offset_bottom = 520.0
+
+[node name="Grid_m" type="GridContainer" parent="TabContainer/Modelo/Model_prop"]
+layout_mode = 2
+theme_override_constants/h_separation = 20
+theme_override_constants/v_separation = 5
+columns = 2
+
+[node name="Label_tel" type="Label" parent="TabContainer/Modelo/Model_prop/Grid_m"]
+layout_mode = 2
+text = "Modelo do telhado"
+
+[node name="b_tel_file" type="Button" parent="TabContainer/Modelo/Model_prop/Grid_m"]
+layout_mode = 2
+text = "Selecionar .obj"
+
+[node name="Label2" type="Label" parent="TabContainer/Modelo/Model_prop/Grid_m"]
+layout_mode = 2
+text = "Cor do telhado"
+
+[node name="color_t" type="ColorPickerButton" parent="TabContainer/Modelo/Model_prop/Grid_m"]
+layout_mode = 2
+text = "Cor hexadecimal"
+
+[node name="Label3" type="Label" parent="TabContainer/Modelo/Model_prop/Grid_m"]
+layout_mode = 2
+text = "Modelo dos obstáculos"
+
+[node name="b_obst" type="Button" parent="TabContainer/Modelo/Model_prop/Grid_m"]
+layout_mode = 2
+text = "Selecionar .obj"
+
+[node name="Label4" type="Label" parent="TabContainer/Modelo/Model_prop/Grid_m"]
+layout_mode = 2
+text = "Cor dos obstáculos"
+
+[node name="color_m" type="ColorPickerButton" parent="TabContainer/Modelo/Model_prop/Grid_m"]
+layout_mode = 2
+text = "Cor hexadecimal"
+
+[node name="Renderização" type="TabBar" parent="TabContainer"]
+visible = false
+layout_mode = 2
+
+[node name="Rend_prop" type="ScrollContainer" parent="TabContainer/Renderização"]
+layout_mode = 0
+offset_left = 30.0
+offset_top = 20.0
+offset_right = 375.0
+offset_bottom = 520.0
+
+[node name="Grid_rend" type="GridContainer" parent="TabContainer/Renderização/Rend_prop"]
+layout_mode = 2
+theme_override_constants/h_separation = 20
+theme_override_constants/v_separation = 5
+columns = 2
+
+[node name="Label_dens" type="Label" parent="TabContainer/Renderização/Rend_prop/Grid_rend"]
+layout_mode = 2
+text = "Densidade de pixels"
+
+[node name="input_dens" type="LineEdit" parent="TabContainer/Renderização/Rend_prop/Grid_rend"]
+layout_mode = 2
+placeholder_text = "Valor > 0"
+expand_to_text_length = true
+
+[node name="Label2" type="Label" parent="TabContainer/Renderização/Rend_prop/Grid_rend"]
+layout_mode = 2
+text = "Forramento"
+
+[node name="input_forr" type="LineEdit" parent="TabContainer/Renderização/Rend_prop/Grid_rend"]
+layout_mode = 2
+placeholder_text = "Valor > 0"
+expand_to_text_length = true
+
+[node name="Label3" type="Label" parent="TabContainer/Renderização/Rend_prop/Grid_rend"]
+layout_mode = 2
+text = "Coef. de difusão"
+
+[node name="input_kd" type="LineEdit" parent="TabContainer/Renderização/Rend_prop/Grid_rend"]
+layout_mode = 2
+placeholder_text = "Valor entre 0 e 1"
+expand_to_text_length = true
+
+[node name="Label4" type="Label" parent="TabContainer/Renderização/Rend_prop/Grid_rend"]
+layout_mode = 2
+text = "Coef. de ambiente"
+
+[node name="input_ka" type="LineEdit" parent="TabContainer/Renderização/Rend_prop/Grid_rend"]
+layout_mode = 2
+placeholder_text = "Valor entre 0 e 1"
+expand_to_text_length = true
+
+[node name="Trajetória" type="TabBar" parent="TabContainer"]
+visible = false
+layout_mode = 2
+
+[node name="traj_prop" type="ScrollContainer" parent="TabContainer/Trajetória"]
+layout_mode = 0
+offset_left = 30.0
+offset_top = 20.0
+offset_right = 375.0
+offset_bottom = 520.0
+
+[node name="Grid_traj" type="GridContainer" parent="TabContainer/Trajetória/traj_prop"]
+layout_mode = 2
+theme_override_constants/h_separation = 20
+theme_override_constants/v_separation = 5
+columns = 2
+
+[node name="Label_dens" type="Label" parent="TabContainer/Trajetória/traj_prop/Grid_traj"]
+layout_mode = 2
+text = "Ângulo de offset"
+
+[node name="input_off" type="LineEdit" parent="TabContainer/Trajetória/traj_prop/Grid_traj"]
+layout_mode = 2
+placeholder_text = "Valor em graus"
+expand_to_text_length = true
+
+[node name="TextEdit" type="TextEdit" parent="TabContainer/Trajetória"]
+layout_mode = 0
+offset_left = 30.0
+offset_top = 89.0
+offset_right = 375.0
+offset_bottom = 501.0
+
+[node name="Label" type="Label" parent="TabContainer/Trajetória"]
+layout_mode = 0
+offset_left = 36.0
+offset_top = 59.0
+offset_right = 363.0
+offset_bottom = 85.0
+text = "Ângulos de azimute e elevação solar"
+horizontal_alignment = 1
+
+[node name="Saída" type="TabBar" parent="TabContainer"]
+visible = false
+layout_mode = 2
+
+[node name="out_prop" type="ScrollContainer" parent="TabContainer/Saída"]
+layout_mode = 0
+offset_left = 30.0
+offset_top = 20.0
+offset_right = 375.0
+offset_bottom = 520.0
+
+[node name="Grid_out" type="GridContainer" parent="TabContainer/Saída/out_prop"]
+layout_mode = 2
+theme_override_constants/h_separation = 20
+theme_override_constants/v_separation = 5
+columns = 2
+
+[node name="Label_out1" type="Label" parent="TabContainer/Saída/out_prop/Grid_out"]
+layout_mode = 2
+text = "Diretório de saída"
+
+[node name="out_dir" type="Button" parent="TabContainer/Saída/out_prop/Grid_out"]
+layout_mode = 2
+text = "Escolher diretório"
+
+[node name="Label" type="Label" parent="TabContainer/Saída/out_prop/Grid_out"]
+layout_mode = 2
+text = "Prefixo dos dados"
+
+[node name="out_data" type="LineEdit" parent="TabContainer/Saída/out_prop/Grid_out"]
+layout_mode = 2
+placeholder_text = "Nome"
+
+[node name="Label2" type="Label" parent="TabContainer/Saída/out_prop/Grid_out"]
+layout_mode = 2
+text = "Prefixo das imagens"
+
+[node name="out_img" type="LineEdit" parent="TabContainer/Saída/out_prop/Grid_out"]
+layout_mode = 2
+placeholder_text = "Nome"
+
+[node name="wind_out_dir" type="FileDialog" parent="."]
+title = "Open a Directory"
+position = Vector2i(150, 150)
+size = Vector2i(600, 400)
+ok_button_text = "Selecionar a Pasta Atual"
+file_mode = 2
+access = 2
+
+[node name="wind_tel" type="FileDialog" parent="."]
+title = "Open a File"
+position = Vector2i(150, 150)
+size = Vector2i(600, 400)
+ok_button_text = "Abrir"
+file_mode = 0
+access = 2
+
+[node name="wind_obst" type="FileDialog" parent="."]
+title = "Open a File"
+position = Vector2i(150, 150)
+size = Vector2i(600, 400)
+ok_button_text = "Abrir"
+file_mode = 0
+access = 2
+
+[connection signal="pressed" from="Button" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="save_settings" to="." method="_on_save_settings_pressed"]
+[connection signal="pressed" from="TabContainer/Modelo/Model_prop/Grid_m/b_tel_file" to="." method="_on_b_tel_file_pressed"]
+[connection signal="pressed" from="TabContainer/Modelo/Model_prop/Grid_m/b_obst" to="." method="_on_b_obst_pressed"]
+[connection signal="pressed" from="TabContainer/Saída/out_prop/Grid_out/out_dir" to="." method="_on_out_dir_pressed"]
+[connection signal="dir_selected" from="wind_out_dir" to="." method="_on_wind_out_dir_dir_selected"]
+[connection signal="file_selected" from="wind_tel" to="." method="_on_wind_tel_file_selected"]
+[connection signal="file_selected" from="wind_obst" to="." method="_on_wind_obst_file_selected"]

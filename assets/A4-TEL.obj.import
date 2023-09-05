@@ -1,0 +1,21 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://cnvqfr2xdpr27"
+path="res://.godot/imported/A4-TEL.obj-0f7d58a6458ee2735425ae8959c6c8c0.mesh"
+
+[deps]
+
+files=["res://.godot/imported/A4-TEL.obj-0f7d58a6458ee2735425ae8959c6c8c0.mesh"]
+
+source_file="res://assets/A4-TEL.obj"
+dest_files=["res://.godot/imported/A4-TEL.obj-0f7d58a6458ee2735425ae8959c6c8c0.mesh", "res://.godot/imported/A4-TEL.obj-0f7d58a6458ee2735425ae8959c6c8c0.mesh"]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+optimize_mesh=true

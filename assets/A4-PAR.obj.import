@@ -1,0 +1,21 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://27p41tlpd2q5"
+path="res://.godot/imported/A4-PAR.obj-3650731af7300766bb68221f733c52f9.mesh"
+
+[deps]
+
+files=["res://.godot/imported/A4-PAR.obj-3650731af7300766bb68221f733c52f9.mesh"]
+
+source_file="res://assets/A4-PAR.obj"
+dest_files=["res://.godot/imported/A4-PAR.obj-3650731af7300766bb68221f733c52f9.mesh", "res://.godot/imported/A4-PAR.obj-3650731af7300766bb68221f733c52f9.mesh"]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+optimize_mesh=true

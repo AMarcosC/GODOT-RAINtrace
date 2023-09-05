@@ -1,0 +1,14 @@
+[remap]
+
+importer="glsl"
+type="RDShaderFile"
+uid="uid://dgl7lv53xl7p2"
+path="res://.godot/imported/GPU-Rain.glsl-c71a38d8c466971b60344c08a707a5ae.res"
+
+[deps]
+
+source_file="res://GPU-Rain.glsl"
+dest_files=["res://.godot/imported/GPU-Rain.glsl-c71a38d8c466971b60344c08a707a5ae.res"]
+
+[params]
+

@@ -1,0 +1,21 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://ni1ruu7iarup"
+path="res://.godot/imported/A16-PAR.obj-5099be0556cc10bdc46c53ba2d921418.mesh"
+
+[deps]
+
+files=["res://.godot/imported/A16-PAR.obj-5099be0556cc10bdc46c53ba2d921418.mesh"]
+
+source_file="res://assets/A16-PAR.obj"
+dest_files=["res://.godot/imported/A16-PAR.obj-5099be0556cc10bdc46c53ba2d921418.mesh", "res://.godot/imported/A16-PAR.obj-5099be0556cc10bdc46c53ba2d921418.mesh"]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+optimize_mesh=true
