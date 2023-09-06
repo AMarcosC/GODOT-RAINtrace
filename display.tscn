@@ -67,7 +67,7 @@ columns = 2
 
 [node name="Label_tel" type="Label" parent="TabContainer/Modelo/Model_prop/Grid_m"]
 layout_mode = 2
-text = "Modelo do telhado"
+text = "Modelo contribuinte"
 
 [node name="b_tel_file" type="Button" parent="TabContainer/Modelo/Model_prop/Grid_m"]
 layout_mode = 2
@@ -75,7 +75,7 @@ text = "Selecionar .obj"
 
 [node name="Label2" type="Label" parent="TabContainer/Modelo/Model_prop/Grid_m"]
 layout_mode = 2
-text = "Cor do telhado"
+text = "Cor do contribuinte"
 
 [node name="color_t" type="ColorPickerButton" parent="TabContainer/Modelo/Model_prop/Grid_m"]
 layout_mode = 2
@@ -189,7 +189,7 @@ offset_left = 36.0
 offset_top = 59.0
 offset_right = 363.0
 offset_bottom = 85.0
-text = "Ângulos de azimute e elevação solar"
+text = "Ângulos de azimute e elevação do vento"
 horizontal_alignment = 1
 
 [node name="Saída" type="TabBar" parent="TabContainer"]
@@ -230,6 +230,14 @@ layout_mode = 2
 text = "Prefixo das imagens"
 
 [node name="out_img" type="LineEdit" parent="TabContainer/Saída/out_prop/Grid_out"]
+layout_mode = 2
+placeholder_text = "Nome"
+
+[node name="Label3" type="Label" parent="TabContainer/Saída/out_prop/Grid_out"]
+layout_mode = 2
+text = "Nome do caso"
+
+[node name="out_caso" type="LineEdit" parent="TabContainer/Saída/out_prop/Grid_out"]
 layout_mode = 2
 placeholder_text = "Nome"
 

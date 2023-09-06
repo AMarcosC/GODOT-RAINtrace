@@ -39,6 +39,10 @@ func recreate_shader_path():
 	if dir.file_exists("GPU-Rain.glsl"):
 		dir.remove("GPU-Rain.glsl")	
 
+
+
+
+
 func vec4_array_to_csv(data, filename, header):  #usar o header para enviar um array com informações
 	var file : FileAccess = FileAccess.open("{0}/{1}.csv".format([out_directory,filename]), FileAccess.WRITE)
 	file.store_csv_line(header)
@@ -401,6 +405,15 @@ func compute(tm, file_prefix, tela_coord):
 	var output := output_bytes.to_float64_array()
 	var hit_bytes := rd.buffer_get_data(params_buffer_reg)
 	var output_hit := hit_bytes.to_float64_array()
+	rd.free_rid(shader)
+	rd.free_rid(pipeline)
+	#rd.free_rid(params_buffer_par)
+	#rd.free_rid(params_buffer_tel)
+	#rd.free_rid(params_buffer_screen)
+	#rd.free_rid(params_buffer_var)
+	#rd.free_rid(params_buffer_out)
+	#rd.free_rid(params_buffer_reg)
+	rd.free_rid(uniform_set)
 	return [output, output_hit]
 	#vec4_array_to_csv(output_hit, "area")
 	
@@ -554,6 +567,15 @@ func compute_rain(tm, file_prefix, tela_coord):
 	var output := output_bytes.to_float64_array()
 	var hit_bytes := rd.buffer_get_data(params_buffer_reg)
 	var output_hit := hit_bytes.to_float64_array()
+	rd.free_rid(shader)
+	rd.free_rid(pipeline)
+	#rd.free_rid(params_buffer_par)
+	#rd.free_rid(params_buffer_tel)
+	#rd.free_rid(params_buffer_screen)
+	#rd.free_rid(params_buffer_var)
+	#rd.free_rid(params_buffer_out)
+	#rd.free_rid(params_buffer_reg)
+	rd.free_rid(uniform_set)
 	return [output, output_hit]
 	#vec4_array_to_csv(output_hit, "area")
 	
@@ -671,12 +693,18 @@ func pre_render_debug():
 		var t_finish = Time.get_ticks_msec()
 		var im = Image.create_from_data(n_x, n_y, false, Image.FORMAT_RGBA8, convert_to_8bit_depth_frame(image_bytes))
 		im.save_png("{0}/{1}-{2}.png".format([out_directory,img_prefix,t]))
-		vec4_array_to_csv(region_bytes, "{0}-{1}".format([data_prefix,t]), [n_x, n_y])
+		#vec4_array_to_csv(region_bytes, "{0}-{1}".format([data_prefix,t]), [n_x, n_y])
 		$LabelPrompt.text += "Imagem de teste gerada em {2} msec\n".format([t+1, len(traj), t_finish-t_start])
 		prog_value += 1
 	$LabelPrompt.text += "Processo Finalizado\n"
 
 func rain_render():
+	var csv_casefile : FileAccess
+	if FileAccess.file_exists("res://output/{0}.csv".format([case_name])):
+		csv_casefile = FileAccess.open("res://output/{0}.csv".format([case_name]), FileAccess.READ_WRITE)
+		csv_casefile.seek_end(0)
+	else:
+		csv_casefile = FileAccess.open("res://output/{0}.csv".format([case_name]), FileAccess.WRITE_READ)
 	for t in range(0, len(traj), 1):
 		var t_start = Time.get_ticks_msec()
 		$LabelPrompt.text += "Gerando Imagem {0}/{1}\n".format([t+1, len(traj)])
@@ -691,13 +719,14 @@ func rain_render():
 		var im = Image.create_from_data(n_x, n_y, false, Image.FORMAT_RGBA8, convert_to_8bit_depth_frame(image_bytes))
 		var cont_area = contribution_area(im,obj_tel_color,pixel_dens)
 		im.save_png("{0}/{1}-{2}-{3}m2.png".format([out_directory,img_prefix,t, snapped(cont_area[0],0.001)]))
-		vec4_array_to_csv(region_bytes, "{0}-{1}".format([data_prefix,t]), [n_x, n_y])
+		csv_casefile.store_csv_line(PackedStringArray([traj[t][0], traj[t][1], snapped(cont_area[0],0.001)]))
 		$LabelPrompt.text += "Imagem {0}/{1} Gerada em {2} msec\n".format([t+1, len(traj), t_finish-t_start])
 		prog_value += 1
+	csv_casefile.close()
 	$LabelPrompt.text += "Processo Finalizado\n"	
 
 func _on_button_pressed():
-	pre_render_debug()
+	#pre_render_debug()
 	rain_render()
 
 
@@ -759,6 +788,7 @@ var obj_tel_color = Color("#f2918c")
 var out_directory
 var data_prefix
 var img_prefix
+var case_name
 
 
 var prog_value = 0
@@ -791,6 +821,8 @@ func _on_save_settings_pressed():
 	#aba saída
 	data_prefix = saidanode.get_child(3).get_text()
 	img_prefix = saidanode.get_child(5).get_text()
+	case_name = saidanode.get_child(7).get_text()
+	print(case_name)
 	screen_size_tlist(obj_par,obj_tel)
 	recreate_shader_path()
 	FileParser.create_shader_file(len(obj_par), len(obj_tel))
