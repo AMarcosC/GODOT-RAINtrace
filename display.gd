@@ -425,13 +425,10 @@ func compute_rain(tm, file_prefix, tela_coord):
 	var buffer_size = 4*tela_pixels*8  #4 comp. de cores, 8 bytes por compoente, vezes o número de pixels da tela
 
 	# We will be using our own RenderingDevice to handle the compute commands
-	var rd : RenderingDevice = RenderingServer.create_local_rendering_device()
+	var gc_r := GPUComputer.new()
 	# Create shader and pipeline
-	var shader_file := load("res://shader/GPU-Rain.glsl")
-	var shader_spirv: RDShaderSPIRV = shader_file.get_spirv()
-	var shader := rd.shader_create_from_spirv(shader_spirv)
-	var pipeline := rd.compute_pipeline_create(shader)
-	
+	gc_r.shader_file = load("res://shader/GPU-Rain.glsl")
+	gc_r._load_shader()
 
 	########## Triângulos da Parede  ##################		
 	# Data for compute shaders has to come as an array of bytes
@@ -441,12 +438,8 @@ func compute_rain(tm, file_prefix, tela_coord):
 		).to_byte_array()
 	# Create storage buffer
 	# Data not needed, can just create with length
-	var params_buffer_par := rd.storage_buffer_create(params_par.size(), params_par)
-	# Create uniform set using the storage buffer
-	var params_uniform_par := RDUniform.new()
-	params_uniform_par.uniform_type = RenderingDevice.UNIFORM_TYPE_STORAGE_BUFFER
-	params_uniform_par.binding = 0
-	params_uniform_par.add_id(params_buffer_par)
+	gc_r._add_buffer(0, 0, params_par)
+
 	
 	########## Triângulos do Telhado  ##################		
 	# Data for compute shaders has to come as an array of bytes
@@ -456,12 +449,8 @@ func compute_rain(tm, file_prefix, tela_coord):
 		).to_byte_array()
 	# Create storage buffer
 	# Data not needed, can just create with length
-	var params_buffer_tel := rd.storage_buffer_create(params_tel.size(), params_tel)
-	# Create uniform set using the storage buffer
-	var params_uniform_tel := RDUniform.new()
-	params_uniform_tel.uniform_type = RenderingDevice.UNIFORM_TYPE_STORAGE_BUFFER
-	params_uniform_tel.binding = 1
-	params_uniform_tel.add_id(params_buffer_tel)
+	gc_r._add_buffer(0, 1, params_tel)
+
 	
 	########## Coordenadas da Tela ##################		
 	# Data for compute shaders has to come as an array of bytes
@@ -475,12 +464,8 @@ func compute_rain(tm, file_prefix, tela_coord):
 		).to_byte_array()
 	# Create storage buffer
 	# Data not needed, can just create with length
-	var params_buffer_screen := rd.storage_buffer_create(params_screen.size(), params_screen)
-	# Create uniform set using the storage buffer
-	var params_uniform_screen := RDUniform.new()
-	params_uniform_screen.uniform_type = RenderingDevice.UNIFORM_TYPE_STORAGE_BUFFER
-	params_uniform_screen.binding = 2
-	params_uniform_screen.add_id(params_buffer_screen)
+	gc_r._add_buffer(0, 2, params_screen)
+
 	
 
 	########## Variáveis Globais  ##################		
@@ -507,75 +492,42 @@ func compute_rain(tm, file_prefix, tela_coord):
 	joint_array.append_array(params_float_var)
 	# Create storage buffer
 	# Data not needed, can just create with length
-	var params_buffer_var := rd.storage_buffer_create(joint_array.size(), joint_array)  #MUDARRRRRRRRR
+	gc_r._add_buffer(0, 3, joint_array)
 	# Create uniform set using the storage buffer
-	var params_uniform_var := RDUniform.new()
-	params_uniform_var.uniform_type = RenderingDevice.UNIFORM_TYPE_STORAGE_BUFFER
-	params_uniform_var.binding = 3
-	params_uniform_var.add_id(params_buffer_var)
 
 	#4 componentes de cor, vezes as coordenadas da tela, 8 bytes por valor, dividido por 2 buffers
 	
 		########## Buffer de Output - Imagem ##################		
 	# Data for compute shaders has to come as an array of bytes
-	var params_buffer_out := rd.storage_buffer_create(buffer_size)
-	# Create uniform set using the storage buffer
-	var params_uniform_out := RDUniform.new()
-	params_uniform_out.uniform_type = RenderingDevice.UNIFORM_TYPE_STORAGE_BUFFER
-	params_uniform_out.binding = 4
-	params_uniform_out.add_id(params_buffer_out)
-	
-	
+	var empty_out_01 : PackedByteArray
+	empty_out_01.resize(buffer_size)
+	gc_r._add_buffer(0, 4, empty_out_01)
+
 		########## Buffer de Output - Região  ##################		
 	# Data for compute shaders has to come as an array of bytes
-	var params_buffer_reg := rd.storage_buffer_create(buffer_size)
-	# Create uniform set using the storage buffer
-	var params_uniform_reg := RDUniform.new()
-	params_uniform_reg.uniform_type = RenderingDevice.UNIFORM_TYPE_STORAGE_BUFFER
-	params_uniform_reg.binding = 5
-	params_uniform_reg.add_id(params_buffer_reg)	
+	var empty_out_02 : PackedByteArray
+	empty_out_02.resize(buffer_size)
+	gc_r._add_buffer(0, 5, empty_out_01)
 
 	##### Uniform Set Unificado  #############
-	var bindings = [
-		params_uniform_par,
-		params_uniform_tel,
-		params_uniform_screen,
-		params_uniform_var,
-		params_uniform_out,
-		params_uniform_reg,
-	]
-	var uniform_set := rd.uniform_set_create(bindings, shader, 0)
-	# Start compute list to start recording our compute commands
+	gc_r._make_pipeline(Vector3i(tela_pixels/16, 1, 1), true)
 
-	var compute_list := rd.compute_list_begin()
-	# Bind the pipeline, this tells the GPU what shader to use
-	rd.compute_list_bind_compute_pipeline(compute_list, pipeline)
-	# Binds the uniform set with the data we want to give our shader
-	rd.compute_list_bind_uniform_set(compute_list, uniform_set, 0)
-	# Dispatch 1x1x1 (XxYxZ) work groups
-	rd.compute_list_dispatch(compute_list, tela_pixels/16, 1, 1)  #len(vline_tel)
-	
-	#rd.compute_list_add_barrier(compute_list)
-	# Tell the GPU we are done with this compute task
-	rd.compute_list_end()
 	# Force the GPU to start our commands
-	rd.submit()
+	gc_r._submit()
 	# Force the CPU to wait for the GPU to finish with the recorded commands
-	rd.sync()
+	gc_r._sync()
 	# Now we can grab our data from the storage buffer
-	var output_bytes := rd.buffer_get_data(params_buffer_out)
+	var output_bytes := gc_r.output(0, 4)
 	var output := output_bytes.to_float64_array()
-	var hit_bytes := rd.buffer_get_data(params_buffer_reg)
+	var hit_bytes := gc_r.output(0, 5)
 	var output_hit := hit_bytes.to_float64_array()
-	rd.free_rid(shader)
-	rd.free_rid(pipeline)
-	#rd.free_rid(params_buffer_par)
-	#rd.free_rid(params_buffer_tel)
-	#rd.free_rid(params_buffer_screen)
-	#rd.free_rid(params_buffer_var)
-	#rd.free_rid(params_buffer_out)
-	#rd.free_rid(params_buffer_reg)
-	rd.free_rid(uniform_set)
+	gc_r._free_rid(0, 0)
+	gc_r._free_rid(0, 1)
+	gc_r._free_rid(0, 2)
+	gc_r._free_rid(0, 3)
+	gc_r._free_rid(0, 4)
+	gc_r._free_rid(0, 5)
+	#gc_r._exit_tree()
 	return [output, output_hit]
 	#vec4_array_to_csv(output_hit, "area")
 	
