@@ -417,120 +417,99 @@ func compute(tm, file_prefix, tela_coord):
 	return [output, output_hit]
 	#vec4_array_to_csv(output_hit, "area")
 	
-func compute_rain(tm, file_prefix, tela_coord):
-	var tela = tela_coord
-	tela_x = len(tela[0])
-	tela_y = len(tela)
-	var tela_pixels = tela_x*tela_y
-	var buffer_size = 4*tela_pixels*8  #4 comp. de cores, 8 bytes por compoente, vezes o número de pixels da tela
-
-	# We will be using our own RenderingDevice to handle the compute commands
+func compute_rain(traj_list, slices_list):
 	var gc_r := GPUComputer.new()
-	# Create shader and pipeline
 	gc_r.shader_file = load("res://shader/GPU-Rain.glsl")
 	gc_r._load_shader()
-
-	########## Triângulos da Parede  ##################		
-	# Data for compute shaders has to come as an array of bytes
-	var vline_par = FileParser.array3d_to_1d(obj_par)
-	var params_par : PackedByteArray = PackedFloat64Array(
-		vline_par
-		).to_byte_array()
-	# Create storage buffer
-	# Data not needed, can just create with length
-	gc_r._add_buffer(0, 0, params_par)
-
-	
-	########## Triângulos do Telhado  ##################		
-	# Data for compute shaders has to come as an array of bytes
-	var vline_tel = FileParser.array3d_to_1d(obj_tel)
-	var params_tel : PackedByteArray = PackedFloat64Array(
-		vline_tel
-		).to_byte_array()
-	# Create storage buffer
-	# Data not needed, can just create with length
-	gc_r._add_buffer(0, 1, params_tel)
-
-	
-	########## Coordenadas da Tela ##################		
-	# Data for compute shaders has to come as an array of bytes
-	var vline_screen
-	if pixel_dens <= 16:
-		vline_screen = FileParser.array2d_to_1d(tela)
-	else:
-		vline_screen = FileParser.array3d_to_1d(tela)
-	var params_screen : PackedByteArray = PackedFloat64Array(
-		vline_screen
-		).to_byte_array()
-	# Create storage buffer
-	# Data not needed, can just create with length
-	gc_r._add_buffer(0, 2, params_screen)
-
-	
-
-	########## Variáveis Globais  ##################		
-	# Data for compute shaders has to come as an array of bytes
-	var time = polar_to_vector(tm[0], tm[1], offset)    #mudar para um nome melhor
-	print(time)
-	var int_variables = [
-		len(obj_par), len(obj_tel), n_x, n_y,
-	]
-	var float_variables = [
-		FARAWAY, kd, ka,
-		obj_par_color.r, obj_par_color.g, obj_par_color.b, 1,
-		obj_tel_color.r, obj_tel_color.g, obj_tel_color.b, 1,
-		time[0], time[1], time[2], 0,      #mudar para um nome melhor
-	]
-	var params_int_var : PackedByteArray = PackedInt32Array(
-		int_variables
-		).to_byte_array()
-	var params_float_var : PackedByteArray = PackedFloat64Array(
-		float_variables
-		).to_byte_array()
-	var joint_array : PackedByteArray = []
-	joint_array.append_array(params_int_var)
-	joint_array.append_array(params_float_var)
-	# Create storage buffer
-	# Data not needed, can just create with length
-	gc_r._add_buffer(0, 3, joint_array)
-	# Create uniform set using the storage buffer
-
-	#4 componentes de cor, vezes as coordenadas da tela, 8 bytes por valor, dividido por 2 buffers
-	
-		########## Buffer de Output - Imagem ##################		
-	# Data for compute shaders has to come as an array of bytes
-	var empty_out_01 : PackedByteArray
-	empty_out_01.resize(buffer_size)
-	gc_r._add_buffer(0, 4, empty_out_01)
-
-		########## Buffer de Output - Região  ##################		
-	# Data for compute shaders has to come as an array of bytes
-	var empty_out_02 : PackedByteArray
-	empty_out_02.resize(buffer_size)
-	gc_r._add_buffer(0, 5, empty_out_01)
-
-	##### Uniform Set Unificado  #############
-	gc_r._make_pipeline(Vector3i(tela_pixels/16, 1, 1), true)
-
-	# Force the GPU to start our commands
-	gc_r._submit()
-	# Force the CPU to wait for the GPU to finish with the recorded commands
-	gc_r._sync()
-	# Now we can grab our data from the storage buffer
-	var output_bytes := gc_r.output(0, 4)
-	var output := output_bytes.to_float64_array()
-	var hit_bytes := gc_r.output(0, 5)
-	var output_hit := hit_bytes.to_float64_array()
-	gc_r._free_rid(0, 0)
-	gc_r._free_rid(0, 1)
-	gc_r._free_rid(0, 2)
-	gc_r._free_rid(0, 3)
-	gc_r._free_rid(0, 4)
-	gc_r._free_rid(0, 5)
-	#gc_r._exit_tree()
-	return [output, output_hit]
-	#vec4_array_to_csv(output_hit, "area")
-	
+	var first_time = true
+	var full_images = []
+	for tj in traj_list:
+		var image_bytes : PackedFloat64Array
+		for slice in slices_list:
+			var tela = slice
+			tela_x = len(tela[0])
+			tela_y = len(tela)
+			var tela_pixels = tela_x*tela_y
+			var buffer_size = 4*tela_pixels*8  #4 comp. de cores, 8 bytes por compoente, vezes o número de pixels da tela
+			########## Triângulos da Parede  ##################		
+			var vline_par = FileParser.array3d_to_1d(obj_par)
+			var params_par : PackedByteArray = PackedFloat64Array(
+				vline_par
+				).to_byte_array()
+			########## Triângulos do Telhado  ##################		
+			var vline_tel = FileParser.array3d_to_1d(obj_tel)
+			var params_tel : PackedByteArray = PackedFloat64Array(
+				vline_tel
+				).to_byte_array()
+			########## Coordenadas da Tela ##################		
+			var vline_screen
+			if pixel_dens <= 16:
+				vline_screen = FileParser.array2d_to_1d(tela)
+			else:
+				vline_screen = FileParser.array3d_to_1d(tela)
+			var params_screen : PackedByteArray = PackedFloat64Array(
+				vline_screen
+				).to_byte_array()
+			########## Variáveis Globais  ##################		
+			var time = polar_to_vector(tj[0], tj[1], offset)    #mudar para um nome melhor
+			var int_variables = [
+				len(obj_par), len(obj_tel), n_x, n_y,
+			]
+			var float_variables = [
+				FARAWAY, kd, ka,
+				obj_par_color.r, obj_par_color.g, obj_par_color.b, 1,
+				obj_tel_color.r, obj_tel_color.g, obj_tel_color.b, 1,
+				time[0], time[1], time[2], 0,      #mudar para um nome melhor
+			]
+			var params_int_var : PackedByteArray = PackedInt32Array(
+				int_variables
+				).to_byte_array()
+			var params_float_var : PackedByteArray = PackedFloat64Array(
+				float_variables
+				).to_byte_array()
+			var joint_array : PackedByteArray = []
+			joint_array.append_array(params_int_var)
+			joint_array.append_array(params_float_var)
+			########## Buffer de Output - Imagem ##################		 #4 componentes de cor, vezes as coordenadas da tela, 8 bytes por valor, dividido por 2 buffers
+			var empty_out_01 : PackedByteArray
+			empty_out_01.resize(buffer_size)
+			########## Buffer de Output - Região  ##################		
+			var empty_out_02 : PackedByteArray
+			empty_out_02.resize(buffer_size)
+			########## Buffer Creation/Renew #####################
+			if first_time:
+				gc_r._add_buffer(0, 0, params_par)
+				gc_r._add_buffer(0, 1, params_tel)
+				gc_r._add_buffer(0, 2, params_screen)
+				gc_r._add_buffer(0, 3, joint_array)
+				gc_r._add_buffer(0, 4, empty_out_01)
+				gc_r._add_buffer(0, 5, empty_out_02)
+				gc_r._make_pipeline(Vector3i(tela_pixels/16, 1, 1), true)
+				gc_r._submit()
+				gc_r._sync()
+			else:
+				gc_r._update_buffer(params_par, 0 ,0)
+				gc_r._update_buffer(params_tel, 0 ,1)
+				gc_r._update_buffer(params_screen, 0 ,2)
+				gc_r._update_buffer(joint_array, 0 ,3)
+				gc_r._update_buffer(empty_out_01, 0 ,4)
+				gc_r._update_buffer(empty_out_02, 0 ,5)
+				gc_r._make_pipeline(Vector3i(tela_pixels/16, 1, 1), true)
+				gc_r._submit()
+				gc_r._sync()
+			# Now we can grab our data from the storage buffer
+			var output_bytes := gc_r.output(0, 4)
+			var output := output_bytes.to_float64_array()
+			image_bytes.append_array(output)
+			gc_r._free_rid(0, 0)
+			gc_r._free_rid(0, 1)
+			gc_r._free_rid(0, 2)
+			gc_r._free_rid(0, 3)
+			gc_r._free_rid(0, 4)
+			gc_r._free_rid(0, 5)
+			#gc_r._exit_tree()
+		full_images.append(image_bytes)
+	return full_images
 
 
 func _ready():
@@ -628,7 +607,6 @@ func pre_render():
 		im.save_png("{0}/{1}-{2}.png".format([out_directory,img_prefix,t]))
 		vec4_array_to_csv(region_bytes, "{0}-{1}".format([data_prefix,t]), [n_x, n_y])
 		$LabelPrompt.text += "Imagem {0}/{1} Gerada em {2} msec\n".format([t+1, len(traj), t_finish-t_start])
-		prog_value += 1
 	$LabelPrompt.text += "Processo Finalizado\n"
 
 func pre_render_debug():
@@ -647,7 +625,6 @@ func pre_render_debug():
 		im.save_png("{0}/{1}-{2}.png".format([out_directory,img_prefix,t]))
 		#vec4_array_to_csv(region_bytes, "{0}-{1}".format([data_prefix,t]), [n_x, n_y])
 		$LabelPrompt.text += "Imagem de teste gerada em {2} msec\n".format([t+1, len(traj), t_finish-t_start])
-		prog_value += 1
 	$LabelPrompt.text += "Processo Finalizado\n"
 
 func rain_render():
@@ -657,23 +634,15 @@ func rain_render():
 		csv_casefile.seek_end(0)
 	else:
 		csv_casefile = FileAccess.open("res://output/{0}.csv".format([case_name]), FileAccess.WRITE_READ)
-	for t in range(0, len(traj), 1):
-		var t_start = Time.get_ticks_msec()
-		$LabelPrompt.text += "Gerando Imagem {0}/{1}\n".format([t+1, len(traj)])
-		var sliced_input = choose_split()
-		var image_bytes : PackedFloat64Array
-		var region_bytes : PackedFloat64Array
-		for pa in sliced_input:
-			var slice = compute_rain(traj[t], t, pa)
-			image_bytes.append_array(slice[0])
-			region_bytes.append_array(slice[1])
-		var t_finish = Time.get_ticks_msec()
-		var im = Image.create_from_data(n_x, n_y, false, Image.FORMAT_RGBA8, convert_to_8bit_depth_frame(image_bytes))
+	#var t_start = Time.get_ticks_msec()
+	var sliced_input = choose_split()
+	var images_data = compute_rain(traj, sliced_input)
+	#var t_finish = Time.get_ticks_msec()
+	for t in range (0, len(traj), 1):
+		var im = Image.create_from_data(n_x, n_y, false, Image.FORMAT_RGBA8, convert_to_8bit_depth_frame(images_data[t]))
 		var cont_area = contribution_area(im,obj_tel_color,pixel_dens)
-		im.save_png("{0}/{1}-{2}-{3}m2.png".format([out_directory,img_prefix,t, snapped(cont_area[0],0.001)]))
+		im.save_png("{0}/{1}-{2}-{3}m2.png".format([out_directory,img_prefix,traj[t][1], snapped(cont_area[0],0.001)]))
 		csv_casefile.store_csv_line(PackedStringArray([traj[t][0], traj[t][1], snapped(cont_area[0],0.001)]))
-		$LabelPrompt.text += "Imagem {0}/{1} Gerada em {2} msec\n".format([t+1, len(traj), t_finish-t_start])
-		prog_value += 1
 	csv_casefile.close()
 	$LabelPrompt.text += "Processo Finalizado\n"	
 
@@ -743,7 +712,6 @@ var img_prefix
 var case_name
 
 
-var prog_value = 0
 var prog_text
 var tela_x
 var tela_y
