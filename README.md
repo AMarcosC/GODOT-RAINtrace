@@ -7,7 +7,7 @@ Uso de algoritmo de traçado de raios baseado no GODOT-Raytrace produzido anteri
 
 O modelo tridimensional apresentado abaixo, representando uma coberta com platimbanda, onde uma das paredes é mais elevada, deve ter a sua área de contribuição calculada a partir da combinação das fórmulas (a) superfície plana horizontal, e (h) quatro superfícies planas verticais, sendo uma com maior altura, da Figura 2 da NBR 10844.
 
-![Modelo do Teste](/manual/DIM ALL DIM.png)
+![Modelo do Teste](/manual/DIM.png)
 
 Portanto, a área de contribuição total deve ser de:
 
