@@ -1,7 +1,7 @@
 # GODOT-RAINtrace
 Uso de algoritmo de traçado de raios baseado no GODOT-Raytrace produzido anteriormente, para o cálculo de área de contribuição de captação de chuva em edificações, baseando-se no caso geral da NBR 10844. O principal objetivo deste software é auxiliar o cálculo da área de contribuição em telhados, cobertas e fachadas de modelagem complexa e excêntrica, que não seja fielmente representada por nenhuma das fórmulas do ábaco da Figura 2 da referida NBR, e portanto se utilizando do caso geral, explicado na Figura 1 da NBR, na forma de algoritmo computacional. Neste caso, o software se utiliza de um algoritmo semelhante ao de traçado de raios, desenvolvido por mim e aplicado em outros softwares anteriores a este. A viabilidade da execução desta tarefa em computadores pessoais só é possível pelo uso de computação paralela e assíncrona desenvolvida a partir de _compute shaders_ da engine de jogos _GODOT_. Não é recomendada a execução deste software em computadores sem placa de vídeo _(graphics card)_, visto que o código paralelizado é executado utilizando tecnologias presentes nelas.
 
-Colocar imagem
+![Inteface de Usuário](/manual/UI.png)
 
 ### Testes e conformidade com a NBR 10844
 
