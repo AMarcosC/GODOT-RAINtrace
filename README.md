@@ -26,4 +26,4 @@ Executando o programa para calcular essa área em todas as direções do vento d
 
 Como é possível observar no gráfico, a maior área obtida ao longo da curva de pontos da inclinação de 63,44° é exatamente 5 m², igualando-se ao resultado obtido utilizando a formulação da Figura 2.
 
-É importante salientar que, por mais que seja possível utilizar este software para casos simples como foi mostrado neste exemplo, ele é voltado para casos complexos que não se enquadam em nenhum caso da Figura 2 da NBR, ou que tenha muitos detalhes ou subdivisões que aumentem muito a tarefa de computar estes vários pequenos detalhes construtivos.
+É importante salientar que, por mais que seja possível utilizar este software para casos simples como foi mostrado neste exemplo, ele é voltado para casos complexos que não se enquadram em nenhum caso da Figura 2 da NBR, ou que tenham muitos detalhes ou subdivisões que aumentem muito a tarefa de computar estes vários pequenos detalhes construtivos.
